@@ -72,10 +72,13 @@ app.post('/upload', upload.single('pptxFile'), (req, res) => {
         return res.status(400).json({ error: 'No file uploaded' });
     }
 
+    // 파일명 인코딩 보정 (Multer가 latin1으로 처리하는 문제 해결)
+    const originalName = Buffer.from(req.file.originalname, 'latin1').toString('utf8').normalize('NFC');
+
     res.json({
         success: true,
         filename: req.file.filename,
-        originalName: req.file.originalname
+        originalName: originalName
     });
 });
 
@@ -115,96 +118,114 @@ app.post('/analyze', (req, res) => {
 
 // 폰트 수술 실행 엔드포인트
 app.post('/process', (req, res) => {
-    const { filename, originalName, options } = req.body;
-    console.log('Processing file:', { filename, originalName });
-    
-    const filePath = path.join('uploads', filename);
-    const outputFileName = 'nice_' + (originalName || filename);
-    const outputPath = path.join('uploads', outputFileName);
-    
-    console.log('Output will be:', outputFileName);
+    try {
+        const { filename, originalName, options } = req.body;
+        console.log('Processing file:', { filename, originalName, options });
 
-    if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ error: 'File not found' });
-    }
+        const filePath = path.join('uploads', filename);
+        const outputFileName = 'FIXED_' + (originalName || filename);
+        const outputPath = path.join('uploads', outputFileName);
 
-    // pptx-surgeon 명령어 구성
-    const args = ['pptx-surgeon.js'];
+        console.log('Input file:', filePath);
+        console.log('Output will be:', outputPath);
 
-    if (options.verbose) {
-        args.push('-v', '2');
-    }
+        if (!fs.existsSync(filePath)) {
+            console.log('File not found:', filePath);
+            return res.status(404).json({ error: 'File not found: ' + filePath });
+        }
 
-    if (options.removeEmbed) {
-        args.push('-r');
-        broadcast({ type: 'progress', message: 'Removing font embeddings...', progress: 30 });
-    }
+        // pptx-surgeon 명령어 구성
+        const args = ['pptx-surgeon.js'];
 
-    if (options.fontMappings && options.fontMappings.length > 0) {
-        options.fontMappings.forEach(mapping => {
-            if (mapping.from && mapping.to) {
-                args.push('-m', `${mapping.from}=${mapping.to}`);
+        if (options.verbose) {
+            args.push('-v', '2');
+        }
+
+        if (options.removeEmbed) {
+            args.push('-r');
+            broadcast({ type: 'progress', message: 'Removing font embeddings...', progress: 30 });
+        }
+
+        if (options.fontMappings && options.fontMappings.length > 0) {
+            options.fontMappings.forEach(mapping => {
+                if (mapping.from && mapping.to) {
+                    args.push('-m', `${mapping.from}=${mapping.to}`);
+                }
+            });
+            broadcast({ type: 'progress', message: 'Applying font mappings...', progress: 50 });
+        }
+
+        if (options.fontCleanup) {
+            args.push('-c', options.fontCleanup);
+            broadcast({ type: 'progress', message: 'Cleaning up fonts...', progress: 60 });
+        }
+
+        args.push('-o', outputPath, filePath);
+
+        console.log('Running command: node', args.join(' '));
+        broadcast({ type: 'progress', message: 'Starting font surgery...', progress: 10 });
+
+        const child = spawn('node', args);
+        let output = '';
+        let error = '';
+
+        child.stdout.on('data', (data) => {
+            const dataStr = data.toString();
+            output += dataStr;
+            console.log('stdout:', dataStr);
+
+            // verbose 모드일 때 실시간 로그 전송
+            if (options.verbose) {
+                broadcast({
+                    type: 'verbose',
+                    message: dataStr.trim(),
+                    progress: 70
+                });
+            } else {
+                broadcast({ type: 'progress', message: 'Processing...', progress: 70 });
             }
         });
-        broadcast({ type: 'progress', message: 'Applying font mappings...', progress: 50 });
+
+        child.stderr.on('data', (data) => {
+            const dataStr = data.toString();
+            error += dataStr;
+            console.error('stderr:', dataStr);
+
+            // verbose 모드일 때 에러도 실시간으로 전송
+            if (options.verbose) {
+                broadcast({
+                    type: 'verbose',
+                    message: `ERROR: ${dataStr.trim()}`,
+                    progress: 70
+                });
+            }
+        });
+
+        child.on('close', (code) => {
+            console.log('Process exited with code:', code);
+            if (code === 0) {
+                broadcast({ type: 'progress', message: 'Surgery complete!', progress: 100 });
+                res.json({
+                    success: true,
+                    outputFile: outputFileName,
+                    message: 'Font surgery completed successfully!'
+                });
+            } else {
+                console.error('Surgery failed with error:', error);
+                broadcast({ type: 'error', message: 'Surgery failed: ' + error });
+                res.status(500).json({ error: error || 'Processing failed' });
+            }
+        });
+
+        child.on('error', (err) => {
+            console.error('Spawn error:', err);
+            broadcast({ type: 'error', message: 'Failed to start process: ' + err.message });
+            res.status(500).json({ error: 'Failed to start process: ' + err.message });
+        });
+    } catch (err) {
+        console.error('Process endpoint error:', err);
+        res.status(500).json({ error: 'Server error: ' + err.message });
     }
-
-    if (options.fontCleanup) {
-        args.push('-c', options.fontCleanup);
-        broadcast({ type: 'progress', message: 'Cleaning up fonts...', progress: 60 });
-    }
-
-    args.push('-o', outputPath, filePath);
-
-    broadcast({ type: 'progress', message: 'Starting font surgery...', progress: 10 });
-
-    const child = spawn('node', args);
-    let output = '';
-    let error = '';
-
-    child.stdout.on('data', (data) => {
-        const dataStr = data.toString();
-        output += dataStr;
-        
-        // verbose 모드일 때 실시간 로그 전송
-        if (options.verbose) {
-            broadcast({ 
-                type: 'verbose', 
-                message: dataStr.trim(),
-                progress: 70 
-            });
-        } else {
-            broadcast({ type: 'progress', message: 'Processing...', progress: 70 });
-        }
-    });
-
-    child.stderr.on('data', (data) => {
-        const dataStr = data.toString();
-        error += dataStr;
-        
-        // verbose 모드일 때 에러도 실시간으로 전송
-        if (options.verbose) {
-            broadcast({ 
-                type: 'verbose', 
-                message: `ERROR: ${dataStr.trim()}`,
-                progress: 70 
-            });
-        }
-    });
-
-    child.on('close', (code) => {
-        if (code === 0) {
-            broadcast({ type: 'progress', message: 'Surgery complete!', progress: 100 });
-            res.json({
-                success: true,
-                outputFile: outputFileName,
-                message: 'Font surgery completed successfully!'
-            });
-        } else {
-            broadcast({ type: 'error', message: 'Surgery failed: ' + error });
-            res.status(500).json({ error: error || 'Processing failed' });
-        }
-    });
 });
 
 // 파일 다운로드 엔드포인트
@@ -219,7 +240,7 @@ app.get('/download/:filename', (req, res) => {
     res.download(filePath, filename);
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 
 const startServer = (port) => {
     server.listen(port, () => {

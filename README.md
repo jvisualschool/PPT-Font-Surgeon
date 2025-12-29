@@ -1,204 +1,132 @@
-# PPTX Surgeon Web Interface 🩺
+# PPT Font Surgeon 🩺
 
-![PPTX Surgeon](https://img.shields.io/badge/PPTX-Surgeon-blue.svg)
-![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Screenshot](screenshot.png)
 
-**사용자 친화적인 웹 인터페이스를 통한 PowerPoint 폰트 문제 해결 도구**
-
-PPTX Surgeon의 강력한 CLI 기능을 직관적인 웹 인터페이스로 쉽게 사용할 수 있습니다. 복잡한 명령어 없이 드래그앤드롭으로 PowerPoint 파일의 폰트 문제를 해결하세요!
+PowerPoint 프레젠테이션의 폰트 문제를 해결하는 웹 기반 도구입니다.
 
 ## ✨ 주요 기능
 
-### 🎯 4단계 간편 프로세스
-1. **파일 업로드** - 드래그앤드롭 또는 클릭으로 PPTX 파일 선택
-2. **폰트 분석** - 파일 내 폰트 정보 자동 분석 및 문제점 탐지
-3. **수술 옵션 선택** - 직관적인 체크박스로 원하는 작업 선택
-4. **수술 실행** - 실시간 진행상황 표시 및 결과 다운로드
+- **폰트 분석**: PPTX 파일에 사용된 모든 폰트를 분석
+- **임베딩 제거**: 깨진 폰트 임베딩 정보를 완전히 제거
+- **폰트 매핑**: 특정 폰트를 다른 폰트로 교체
+- **실시간 진행**: WebSocket을 통한 실시간 처리 상태 표시
+- **다국어 지원**: 한국어/영어 UI 지원
+- **다크/라이트 테마**: 사용자 선호에 따른 테마 선택
 
-### 🛠️ 폰트 수술 옵션
-- **폰트 임베딩 제거** - 깨진 폰트 임베딩 정보를 완전히 제거
-- **폰트 이름 매핑** - 특정 폰트를 다른 폰트로 교체 (다중 매핑 지원)
-- **올인원 폰트 정리** - 지정된 폰트만 유지하고 나머지는 기본 폰트로 통합
-- **상세 로그** - 처리 과정 실시간 모니터링
+## 🛠️ 기술 스택
 
-### 🎨 사용자 경험
-- **다크/라이트 테마** 자동 전환
-- **한국어/영어** 언어 지원
-- **실시간 진행바** 및 WebSocket 통신
-- **반응형 디자인** - 모바일, 태블릿, 데스크톱 지원
-- **드래그앤드롭** 파일 업로드
+- **Backend**: Node.js, Express.js
+- **Frontend**: Vanilla JavaScript, CSS3
+- **Real-time**: WebSocket (ws)
+- **Core Engine**: [pptx-surgeon](https://github.com/rse/pptx-surgeon) by Dr. Ralf S. Engelschall
+- **Icons**: Lucide Icons
+- **Fonts**: Google Fonts (Inter, JetBrains Mono)
 
-## 🚀 빠른 시작
-
-### 필수 요구사항
-- **Node.js** 18.0.0 이상
-- **npm** 또는 **yarn**
-
-### 설치 및 실행
+## 📦 설치 방법
 
 ```bash
-# 1. 저장소 클론
-git clone https://github.com/your-username/pptx-surgeon-web.git
+# 저장소 클론
+git clone https://github.com/YOUR_USERNAME/pptx-surgeon-web.git
 cd pptx-surgeon-web
 
-# 2. 의존성 설치
+# 의존성 설치
 npm install
 
-# 3. 서버 실행
+# 서버 시작
 npm start
-# 또는
-node server.js
-
-# 4. 브라우저에서 접속
-# http://localhost:3000
 ```
 
-## 📦 Docker 실행 (선택사항)
+서버가 `http://localhost:3000`에서 실행됩니다.
+
+## 🚀 프로덕션 배포
+
+### PM2를 사용한 배포
 
 ```bash
-# Docker 이미지 빌드
-docker build -t pptx-surgeon-web .
+# PM2 설치
+npm install -g pm2
 
-# 컨테이너 실행
-docker run -p 3000:3000 pptx-surgeon-web
+# 앱 시작
+PORT=3002 pm2 start server.js --name ppt-surgeon
+
+# 자동 시작 설정
+pm2 startup
+pm2 save
 ```
 
-## 🖥️ 사용 방법
+### Nginx/Apache 리버스 프록시 설정
 
-### 1. 파일 업로드
-- PPTX 파일을 업로드 영역에 드래그앤드롭
-- 또는 "파일 선택" 버튼 클릭
+Apache 예시:
+```apache
+ProxyPass /PPTFONT/ http://127.0.0.1:3002/
+ProxyPassReverse /PPTFONT/ http://127.0.0.1:3002/
 
-### 2. 폰트 분석
-- "폰트 분석 시작" 버튼 클릭
-- 파일 내 모든 폰트 정보 자동 스캔
-
-### 3. 수술 옵션 선택
-#### 폰트 임베딩 제거
-```
-✅ 폰트 임베딩 제거
-   깨진 폰트 임베딩 정보를 완전히 제거합니다
+# WebSocket 프록시
+ProxyPass /PPTFONT/ws ws://127.0.0.1:3002/ws
+ProxyPassReverse /PPTFONT/ws ws://127.0.0.1:3002/ws
 ```
 
-#### 폰트 매핑
-```
-✅ 폰트 이름 매핑
-   Arial → 맑은 고딕
-   Times New Roman → 나눔명조
-   + 매핑 추가
-```
+## 📁 프로젝트 구조
 
-#### 올인원 정리
 ```
-✅ 올인원 폰트 정리
-   ☑️ 맑은 고딕
-   ☑️ 나눔바른고딕
-   ☑️ Arial
-   ☐ Times New Roman (제거됨)
-```
-
-### 4. 수술 실행 및 다운로드
-- "수술 시작" 버튼 클릭
-- 실시간 진행상황 확인
-- 완료 후 "결과 파일 다운로드" 클릭
-
-## 🔧 고급 설정
-
-### 환경 변수
-```bash
-PORT=3000                    # 서버 포트 (기본값: 3000)
-NODE_ENV=production          # 운영 환경 설정
-UPLOAD_LIMIT=10MB           # 업로드 파일 크기 제한
+pptx-surgeon-web/
+├── public/                 # 프론트엔드 파일
+│   ├── index.html         # 메인 HTML
+│   ├── style.css          # 스타일시트
+│   ├── script.js          # 클라이언트 JavaScript
+│   ├── splash.jpg         # 스플래시 이미지
+│   └── img/               # 아이콘 이미지
+├── uploads/               # 업로드된 파일 (자동 생성)
+├── server.js              # Express 서버
+├── pptx-surgeon.js        # 메인 PPTX 처리 모듈
+├── pptx-surgeon-*.js      # PPTX 처리 하위 모듈
+├── package.json           # 의존성 정의
+└── README.md              # 이 파일
 ```
 
-### 개발 모드 실행
-```bash
-# 개발 서버 실행 (nodemon 사용)
-npm run dev
+## 🔒 보안 고려사항
 
-# 코드 스타일 검사
-npm run lint
+- 업로드된 파일은 처리 후 자동 삭제됩니다
+- 파일 크기 제한: 100MB
+- 허용 파일 형식: .pptx만 허용
+- CORS 설정 권장 (프로덕션 환경)
 
-# 빌드 (배포용 바이너리 생성)
-npm run build
-```
+## 📝 사용 방법
 
-## 🛡️ 보안 정보
+1. **파일 선택**: PPTX 파일을 드래그 앤 드롭하거나 선택
+2. **폰트 분석**: 자동으로 파일의 폰트 정보 분석
+3. **옵션 설정**: 원하는 처리 옵션 선택
+   - 폰트 임베딩 제거
+   - 폰트 매핑
+   - 상세 로그 출력
+4. **수술 실행**: 처리 시작 및 진행 상황 확인
+5. **결과 다운로드**: 처리된 파일 다운로드
 
-### 파일 업로드 보안
-- ✅ PPTX 파일만 업로드 허용
-- ✅ 파일 크기 제한 적용
-- ✅ 안전한 파일 경로 처리
-- ✅ 임시 파일 자동 정리
+## 🎨 스크린샷
 
-### 네트워크 보안
-- ✅ CORS 설정 적용
-- ✅ WebSocket 보안 연결
-- ⚠️ HTTPS 사용 권장 (운영 환경)
+### 메인 화면
+파일 업로드 및 폰트 분석 인터페이스
 
-## 🔍 문제 해결
+### 스플래시 모달
+프로젝트 정보 및 크레딧
 
-### 일반적인 문제들
+### 처리 결과
+성공적인 폰트 수술 완료 화면
 
-**Q: 업로드가 안 돼요**
-```bash
-# 파일 권한 확인
-chmod 755 uploads/
+## 👨‍💻 개발자
 
-# 디스크 용량 확인
-df -h
-```
+**Jinho Jung**
+- Email: jvisualschool@gmail.com
 
-**Q: 수술이 실패해요**
-```bash
-# 상세 로그 확인 (체크박스 활성화)
-# 또는 서버 로그 확인
-tail -f server.log
-```
+## 🙏 크레딧
 
-**Q: 윈도우에서 실행이 안 돼요**
-```cmd
-# PowerShell에서 실행 정책 변경
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
-# Node.js 재설치 후 재시도
-node --version
-npm --version
-```
-
-## 🤝 기여하기
-
-1. Fork 프로젝트
-2. Feature 브랜치 생성 (`git checkout -b feature/amazing-feature`)
-3. 변경사항 커밋 (`git commit -m 'Add amazing feature'`)
-4. 브랜치에 Push (`git push origin feature/amazing-feature`)
-5. Pull Request 생성
+- **Original pptx-surgeon**: [Dr. Ralf S. Engelschall](https://github.com/rse/pptx-surgeon)
+- **Icons**: [Lucide](https://lucide.dev/)
 
 ## 📄 라이선스
 
-이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 확인하세요.
-
-원본 PPTX Surgeon CLI 도구: © 2020-2021 Dr. Ralf S. Engelschall
-
-## 🙏 감사의 말
-
-- **Dr. Ralf S. Engelschall** - 원본 [pptx-surgeon](https://github.com/rse/pptx-surgeon) CLI 도구 개발
-- **Font Awesome** - 아이콘 제공
-- **Express.js & WebSocket** - 웹 서버 및 실시간 통신
-
-## 📞 지원
-
-- 🐛 **버그 리포트**: [Issues](https://github.com/your-username/pptx-surgeon-web/issues)
-- 💡 **기능 제안**: [Discussions](https://github.com/your-username/pptx-surgeon-web/discussions)
-
+이 프로젝트는 원본 pptx-surgeon의 라이선스를 따릅니다.
 
 ---
 
-<div align="center">
-
-**⚡ PowerPoint 폰트 문제, 이제 클릭 몇 번으로 해결하세요! ⚡**
-
-[🌟 Star](https://github.com/your-username/pptx-surgeon-web) | [🍴 Fork](https://github.com/your-username/pptx-surgeon-web/fork) | [📝 Issues](https://github.com/your-username/pptx-surgeon-web/issues)
-
-</div>
+Made with ❤️ by Jinho Jung | 2024

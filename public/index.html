@@ -1,168 +1,215 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PPTX Surgeon - Web Interface</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
-    <!-- Language Toggle Button - Fixed Position -->
-    <div class="language-toggle" id="languageToggle">
-        <span id="languageText">한</span>
+    <!-- Fixed Toggles -->
+    <div class="toggle-btn" id="languageToggle">
+        <span id="languageText" style="font-weight: 700; font-size: 0.9rem;">한</span>
     </div>
-    
-    <!-- Theme Toggle Button - Fixed Position -->
-    <div class="theme-toggle" id="themeToggle">
-        <i class="fas fa-moon" id="themeIcon"></i>
+
+    <div class="toggle-btn" id="themeToggle">
+        <i data-lucide="moon" id="themeIcon"></i>
     </div>
-    
+
     <div class="container">
+        <!-- Header with Preserved Animation -->
         <header class="header">
-            <div class="header-content">
-                <div class="header-images">
-                    <img src="img/img1.svg" alt="Medical Icon 1" class="header-img active">
-                    <img src="img/img2.svg" alt="Medical Icon 2" class="header-img">
-                    <img src="img/img3.svg" alt="Medical Icon 3" class="header-img">
-                    <img src="img/img4.svg" alt="Medical Icon 4" class="header-img">
-                    <img src="img/img5.svg" alt="Medical Icon 5" class="header-img">
-                    <img src="img/img6.svg" alt="Medical Icon 6" class="header-img">
-                    <img src="img/img7.svg" alt="Medical Icon 7" class="header-img">
-                    <img src="img/img8.svg" alt="Medical Icon 8" class="header-img">
-                    <img src="img/img9.svg" alt="Medical Icon 9" class="header-img">
-                    <img src="img/img10.svg" alt="Medical Icon 10" class="header-img">
-                    <img src="img/img11.svg" alt="Medical Icon 11" class="header-img">
-                    <img src="img/img12.svg" alt="Medical Icon 12" class="header-img">
-                    <img src="img/img13.svg" alt="Medical Icon 13" class="header-img">
-                </div>
-                <div class="header-text">
-                    <h1>PPTX Surgeon</h1>
-                    <p>PowerPoint 폰트 문제를 해결하는 전문 도구</p>
-                </div>
+            <div class="header-images">
+                <img src="img/img1.svg" alt="Medical Icon 1" class="header-img active">
+                <img src="img/img2.svg" alt="Medical Icon 2" class="header-img">
+                <img src="img/img3.svg" alt="Medical Icon 3" class="header-img">
+                <img src="img/img4.svg" alt="Medical Icon 4" class="header-img">
+                <img src="img/img5.svg" alt="Medical Icon 5" class="header-img">
+                <img src="img/img6.svg" alt="Medical Icon 6" class="header-img">
+                <img src="img/img7.svg" alt="Medical Icon 7" class="header-img">
+                <img src="img/img8.svg" alt="Medical Icon 8" class="header-img">
+                <img src="img/img9.svg" alt="Medical Icon 9" class="header-img">
+                <img src="img/img10.svg" alt="Medical Icon 10" class="header-img">
+                <img src="img/img11.svg" alt="Medical Icon 11" class="header-img">
+                <img src="img/img12.svg" alt="Medical Icon 12" class="header-img">
+                <img src="img/img13.svg" alt="Medical Icon 13" class="header-img">
+            </div>
+            <div class="header-text">
+                <h1>PPT Font Surgeon</h1>
+                <p>PowerPoint 폰트 해결사</p>
             </div>
         </header>
 
+        <!-- Stepper Navigation -->
+        <div class="stepper-wrapper">
+            <div class="stepper">
+                <div class="step-item active" id="step-nav-1">
+                    <div class="step-circle">1</div>
+                    <span class="step-label">파일 선택</span>
+                </div>
+                <div class="step-item" id="step-nav-2">
+                    <div class="step-circle">2</div>
+                    <span class="step-label">폰트 분석</span>
+                </div>
+                <div class="step-item" id="step-nav-3">
+                    <div class="step-circle">3</div>
+                    <span class="step-label">옵션 설정</span>
+                </div>
+                <div class="step-item" id="step-nav-4">
+                    <div class="step-circle">4</div>
+                    <span class="step-label">수술 실행</span>
+                </div>
+            </div>
+        </div>
+
         <main class="main-content">
             <!-- Step 1: File Upload -->
-            <div class="step-card active" id="step1">
-                <div class="step-header">
-                    <span class="step-number">1</span>
-                    <h2>PPTX 파일 선택</h2>
-                </div>
+            <div class="step-content active" id="step1">
                 <div class="upload-area" id="uploadArea">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>PPTX 파일을 드래그하거나 클릭하여 선택하세요</p>
+                    <i data-lucide="cloud-upload" style="width: 48px; height: 48px; color: var(--primary);"></i>
+                    <div class="upload-text">
+                        <h3>PPTX 파일 업로드</h3>
+                        <p>파일을 드래그하거나 클릭하여 선택하세요</p>
+                    </div>
                     <input type="file" id="fileInput" accept=".pptx" hidden>
-                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
-                        파일 선택
+                    <button class="btn btn-primary btn-large" onclick="document.getElementById('fileInput').click()">
+                        <i data-lucide="folder-open"></i> 파일 선택
                     </button>
-                </div>
-                <div class="file-info" id="fileInfo" style="display: none;">
-                    <i class="fas fa-file-powerpoint"></i>
-                    <span id="fileName"></span>
-                    <button class="btn btn-secondary btn-sm" id="removeFileBtn">제거</button>
+                    <p class="security-note" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 15px;"></p>
                 </div>
             </div>
 
             <!-- Step 2: Analysis -->
-            <div class="step-card" id="step2">
-                <div class="step-header">
-                    <span class="step-number">2</span>
-                    <h2>폰트 분석</h2>
-                </div>
-                <div class="analysis-content">
-                    <button class="btn btn-primary" id="analyzeBtn">
-                        <i class="fas fa-search"></i> 폰트 분석 시작
+            <div class="step-content" id="step2">
+                <div class="file-card">
+                    <div class="file-icon"><i data-lucide="file-bar-chart-2"></i></div>
+                    <div class="file-details">
+                        <div class="file-name" id="fileName">presentation.pptx</div>
+                        <div class="file-size" id="fileSize">Ready for analysis</div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" id="removeFileBtn">
+                        <i data-lucide="x"></i> 변경
                     </button>
-                    <div class="analysis-result" id="analysisResult"></div>
+                </div>
+
+                <div class="analysis-wrapper">
+                    <div class="analysis-result" id="analysisResult" style="display:none;"></div>
+
+                    <div class="action-buttons" style="text-align: center; margin-top: 20px;">
+                        <button class="btn btn-primary btn-large" id="analyzeBtn">
+                            <i data-lucide="search"></i> 폰트 분석 시작
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Step 3: Options -->
-            <div class="step-card" id="step3">
-                <div class="step-header">
-                    <span class="step-number">3</span>
-                    <h2>수술 옵션 선택</h2>
-                </div>
-                <div class="options-content">
-                    <div class="option-group">
+            <div class="step-content" id="step3">
+                <div class="options-grid">
+                    <div class="option-card">
                         <label class="checkbox-label">
                             <input type="checkbox" id="removeEmbed">
                             <span class="checkmark"></span>
-                            폰트 임베딩 제거
-                            <small>깨진 폰트 임베딩 정보를 완전히 제거합니다</small>
+                            <div class="option-text">
+                                <span class="option-title">폰트 임베딩 제거</span>
+                                <span class="option-desc">깨진 폰트 임베딩 정보를 완전히 제거하여 오류를 해결합니다.</span>
+                            </div>
                         </label>
                     </div>
 
-                    <div class="option-group">
+                    <div class="option-card">
                         <label class="checkbox-label">
                             <input type="checkbox" id="enableMapping">
                             <span class="checkmark"></span>
-                            폰트 이름 매핑
-                            <small>특정 폰트를 다른 폰트로 교체합니다</small>
+                            <div class="option-text">
+                                <span class="option-title">폰트 이름 매핑</span>
+                                <span class="option-desc">특정 폰트를 시스템에 있는 다른 폰트로 교체합니다.</span>
+                            </div>
                         </label>
                         <div class="font-mappings" id="fontMappings" style="display: none;">
-                            <div class="mapping-item">
-                                <select class="mapping-from">
-                                    <option value="">기존 폰트 선택</option>
-                                </select>
-                                <i class="fas fa-arrow-right"></i>
-                                <select class="mapping-to">
-                                    <option value="">새 폰트 선택</option>
-                                </select>
-                                <button class="btn btn-danger btn-sm" onclick="removeMappingItem(this)">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                            <div class="mapping-container" id="mappingContainer">
+                                <div class="mapping-item">
+                                    <select class="mapping-from">
+                                        <option value="">기존 폰트</option>
+                                    </select>
+                                    <i data-lucide="arrow-right" style="color: var(--text-muted)"></i>
+                                    <select class="mapping-to">
+                                        <option value="">새 폰트</option>
+                                    </select>
+                                    <button class="btn btn-danger btn-sm" onclick="removeMappingItem(this)"><i
+                                            data-lucide="trash-2"></i></button>
+                                </div>
                             </div>
-                            <button class="btn btn-secondary btn-sm" onclick="addMappingItem()">
-                                <i class="fas fa-plus"></i> 매핑 추가
+                            <button class="btn btn-secondary btn-sm" style="margin-top: 10px;"
+                                onclick="addMappingItem()">
+                                <i data-lucide="plus"></i> 매핑 추가
                             </button>
                         </div>
                     </div>
 
-                    <div class="option-group">
+                    <div class="option-card">
                         <label class="checkbox-label">
                             <input type="checkbox" id="enableCleanup">
                             <span class="checkmark"></span>
-                            올인원 폰트 정리
-                            <small>지정된 폰트들만 유지하고 나머지는 기본 폰트로 매핑</small>
+                            <div class="option-text">
+                                <span class="option-title">올인원 폰트 정리</span>
+                                <span class="option-desc">선택한 폰트만 남기고 나머지는 모두 기본 폰트로 변경합니다.</span>
+                            </div>
                         </label>
                         <div class="cleanup-options" id="cleanupOptions" style="display: none;">
-                            <div class="font-list" id="fontList">
-                                <!-- 폰트 체크박스들이 동적으로 추가됩니다 -->
-                            </div>
+                            <div class="font-list" id="fontList"></div>
                         </div>
                     </div>
 
-                    <div class="option-group">
+                    <div class="option-card">
                         <label class="checkbox-label">
                             <input type="checkbox" id="verbose">
                             <span class="checkmark"></span>
-                            상세 로그 출력
+                            <div class="option-text">
+                                <span class="option-title">상세 로그 출력</span>
+                                <span class="option-desc">수술 과정을 상세하게 확인합니다.</span>
+                            </div>
                         </label>
+                    </div>
+
+                    <div class="action-buttons" style="text-align: right; margin-top: 20px;">
+                        <button class="btn btn-primary btn-large" id="confirmOptionsBtn">
+                            다음 단계로 <i data-lucide="arrow-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
 
             <!-- Step 4: Process -->
-            <div class="step-card" id="step4">
-                <div class="step-header">
-                    <span class="step-number">4</span>
-                    <h2>폰트 수술 실행</h2>
-                </div>
-                <div class="process-content">
-                    <div class="process-button-container">
-                        <button class="btn btn-success btn-large" id="processBtn">
-                            <i class="fas fa-play"></i> 수술 시작
-                        </button>
+            <div class="step-content" id="step4">
+                <div class="process-wrapper">
+                    <div class="process-center" style="text-align: center; margin-bottom: 40px;"
+                        id="startProcessContainer">
+                        <h3 style="margin-bottom: 20px;">모든 준비가 완료되었습니다.</h3>
+                        <div style="display: flex; gap: 10px; max-width: 500px; margin: 0 auto;">
+                            <button class="btn btn-secondary btn-large" style="flex: 0.35;"
+                                onclick="window.surgeonUI.activateStep(3)">
+                                <i data-lucide="arrow-left"></i> 뒤로
+                            </button>
+                            <button class="btn btn-success btn-large" style="flex: 1;" id="processBtn">
+                                <i data-lucide="play"></i> 수술 시작
+                            </button>
+                        </div>
                     </div>
-                    
+
                     <div class="progress-container" id="progressContainer" style="display: none;">
                         <div class="progress-bar">
                             <div class="progress-fill" id="progressFill"></div>
                         </div>
-                        <div class="progress-text" id="progressText">준비 중...</div>
+                        <div class="progress-text" id="progressText" style="font-weight: 600; color: var(--primary);">준비
+                            중...</div>
                         <div class="verbose-log" id="verboseLog" style="display: none;">
                             <h4>상세 로그:</h4>
                             <div class="log-content" id="logContent"></div>
@@ -171,22 +218,119 @@
 
                     <div class="result-container" id="resultContainer" style="display: none;">
                         <div class="success-message">
-                            <i class="fas fa-check-circle"></i>
+                            <i data-lucide="check-circle" style="width: 64px; height: 64px; color: #10b981;"></i>
                             <h3>수술 완료!</h3>
                             <p>폰트 문제가 성공적으로 해결되었습니다.</p>
-                            <button class="btn btn-primary" id="downloadBtn">
-                                <i class="fas fa-download"></i> 결과 파일 다운로드
-                            </button>
+                            <div style="display: flex; gap: 10px; max-width: 600px; margin: 20px auto 0;">
+                                <button class="btn btn-primary btn-large" style="flex: 5;" id="downloadBtn">
+                                    <i data-lucide="download"></i> 결과 파일 다운로드
+                                </button>
+                                <button class="btn btn-secondary" style="flex: 2.5;" id="viewLogBtn"
+                                    onclick="document.getElementById('logModal').style.display='flex'">
+                                    <i data-lucide="list"></i> 상세로그
+                                </button>
+                                <button class="btn btn-secondary" style="flex: 2.5;" onclick="location.reload()">
+                                    <i data-lucide="rotate-ccw"></i> 처음으로
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- Status Messages -->
         <div class="toast-container" id="toastContainer"></div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <span><i data-lucide="code-2" style="width: 14px; height: 14px; vertical-align: middle;"></i> Node.js &
+                    PPTX Surgeon</span>
+                <span class="divider">|</span>
+                <span>Original by <a href="https://github.com/rse/pptx-surgeon" target="_blank">Dr. Ralf S.
+                        Engelschall</a></span>
+                <span class="divider">|</span>
+                <span>Developed by JInho Jung</span>
+                <span class="divider">|</span>
+                <span>2026</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Log Modal -->
+    <div id="logModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content"
+            style="background: white; border-radius: 12px; max-width: 800px; width: 90%; max-height: 80vh;">
+            <div class="modal-header"
+                style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e2e8f0;">
+                <h3 style="margin: 0; color: #1e293b;">상세 로그</h3>
+                <button
+                    style="background: #ef4444; border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"
+                    onclick="document.getElementById('logModal').style.display='none'">
+                    <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div class="log-content" id="modalLogContent"
+                    style="height: 400px; overflow-y: auto; background: #1e293b; padding: 15px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #e2e8f0; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Splash Modal -->
+    <div id="splashModal" class="splash-overlay">
+        <div class="splash-content">
+            <div class="splash-image" onclick="openImageViewer()" style="cursor: zoom-in;">
+                <img src="splash.jpg" alt="PPT Font Surgeon">
+            </div>
+            <div class="splash-info">
+                <h1 class="splash-title">PPT Font Surgeon</h1>
+                <p class="splash-subtitle">PowerPoint 폰트 문제 해결 전문 도구</p>
+
+                <div class="splash-details">
+                    <div class="splash-section">
+                        <h4><i data-lucide="layers"></i> 기술 스택</h4>
+                        <div class="tech-tags">
+                            <a href="https://nodejs.org" target="_blank" class="tech-tag">Node.js</a>
+                            <a href="https://expressjs.com" target="_blank" class="tech-tag">Express</a>
+                            <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSocket" target="_blank"
+                                class="tech-tag">WebSocket</a>
+                            <a href="https://github.com/rse/pptx-surgeon" target="_blank" class="tech-tag">PPTX
+                                Surgeon</a>
+                        </div>
+                    </div>
+
+                    <div class="splash-section">
+                        <h4><i data-lucide="git-branch"></i> 원본 소스</h4>
+                        <a href="https://github.com/rse/pptx-surgeon" target="_blank" class="source-link">
+                            <i data-lucide="github"></i> Dr. Ralf S. Engelschall / pptx-surgeon
+                        </a>
+                    </div>
+
+                    <div class="splash-section">
+                        <h4><i data-lucide="user"></i> 개발자</h4>
+                        <a href="mailto:jvisualschool@gmail.com" class="developer-link">
+                            <i data-lucide="mail"></i> Jinho Jung
+                        </a>
+                    </div>
+                </div>
+
+                <button class="splash-start-btn" onclick="closeSplash()">
+                    <i data-lucide="play"></i> 시작하기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div id="imageViewer" class="image-viewer-overlay hidden" onclick="closeImageViewer()">
+        <button class="image-viewer-close" onclick="closeImageViewer()">
+            <i data-lucide="x"></i>
+        </button>
+        <img src="splash.jpg" alt="Full Image" class="image-viewer-img">
     </div>
 
     <script src="script.js"></script>
 </body>
+
 </html>
