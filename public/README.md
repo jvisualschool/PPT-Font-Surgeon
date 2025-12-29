@@ -1,7 +1,5 @@
 # PPT Font Surgeon 🩺
 
-![Screenshot](screenshot.png)
-
 PowerPoint 프레젠테이션의 폰트 문제를 해결하는 웹 기반 도구입니다.
 
 ## ✨ 주요 기능
